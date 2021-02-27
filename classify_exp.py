@@ -54,33 +54,20 @@ def main():
 
     # end your code here
 
-    # print(
-    #     "\n\nDecision Tree: -------------------------------------------------------------------------\n\n"
-    # )
+    print(
+        "\n\nDecision Tree: -------------------------------------------------------------------------\n\n"
+    )
     # start your code here
-    # tree_classifier = DecisionTreeClassifier(
-    #     criterion="gini", random_state=100, max_depth=4, min_samples_leaf=5
-    # )
 
-    # tree_classifier = DecisionTreeClassifier(
-    #     criterion="entropy",
-    #     random_state=100,
-    #     max_depth=9,
-    #     min_samples_leaf=5,
-    # )
+    tree_classifier = DecisionTreeClassifier(
+        max_depth=4,
+        max_leaf_nodes=4,
+        random_state=100,
+    )
 
-    # tree_classifier = DecisionTreeClassifier(
-    #     max_depth=4,
-    #     # max_features="auto",
-    #     max_leaf_nodes=4,
-    #     # min_impurity_split=None,
-    #     # min_samples_leaf=1,
-    #     random_state=100,
-    # )
-
-    # tree_classifier.fit(X_train, y_train)
-    # y_pred_tree = tree_classifier.predict(X_test)
-    # evaluate(y_test, y_pred_tree)
+    tree_classifier.fit(X_train, y_train)
+    y_pred_tree = tree_classifier.predict(X_test)
+    evaluate(y_test, y_pred_tree)
 
     # feature_imp_tree = pd.Series(
     #     tree_classifier.feature_importances_, index=X_train.columns
@@ -100,24 +87,22 @@ def main():
 
     # end your code here
 
-    # print(
-    #     "\n\nRandom Forest: -------------------------------------------------------------------------\n\n"
-    # )
-    # # start your code here
-    # rf_classifier = RandomForestClassifier(
-    #     # bootstrap=False,
-    #     criterion="entropy",
-    #     max_depth=9,
-    #     # max_features="sqrt",
-    #     max_leaf_nodes=21,
-    #     min_samples_leaf=5,
-    #     # min_samples_split=5,
-    #     random_state=100,
-    # )
+    print(
+        "\n\nRandom Forest: -------------------------------------------------------------------------\n\n"
+    )
+    # start your code here
+    rf_classifier = RandomForestClassifier(
+        # bootstrap=False,
+        criterion="entropy",
+        max_depth=9,
+        max_leaf_nodes=21,
+        min_samples_leaf=5,
+        random_state=100,
+    )
 
-    # rf_classifier.fit(X_train, y_train)
-    # y_pred_rf = rf_classifier.predict(X_test)
-    # evaluate(y_test, y_pred_rf)
+    rf_classifier.fit(X_train, y_train)
+    y_pred_rf = rf_classifier.predict(X_test)
+    evaluate(y_test, y_pred_rf)
 
     # feature_imp_rf = pd.Series(
     #     rf_classifier.feature_importances_, index=X_train.columns
@@ -132,11 +117,9 @@ def main():
     xgb_classifier = xgb.XGBClassifier(
         objective="binary:logistic",
         learning_rate=0.1,
-        max_depth=9,
-        min_child_weight=3,
+        max_depth=3,
+        min_child_weight=8,
         use_label_encoder=False,
-        gamma=0,
-        subsample=0.8,
         colsample_bytree=0.5,
     )
 
@@ -161,28 +144,21 @@ def main():
     # plt.show()
     # # end your code here
 
-    # print(
-    #     "\n\nVoting: -------------------------------------------------------------------------\n\n"
-    # )
-    # vt_classifier = VotingClassifier(
-    #     estimators=[
-    #         ("tree", tree_classifier),
-    #         ("rf", rf_classifier),
-    #         ("xgb", xgb_classifier),
-    #     ]
-    # )
-    # # start your code here
-    # vt_classifier = VotingClassifier(
-    #     estimators=[
-    #         ("tree", tree_classifier),
-    #         ("rf", rf_classifier),
-    #         ("xgb", xgb_classifier),
-    #     ]
-    # )
-    # vt_classifier.fit(X_train, y_train)
-    # y_pred_vt = vt_classifier.predict(X_test)
-    # evaluate(y_test, y_pred_vt)
-    # # end your code here
+    print(
+        "\n\nVoting: -------------------------------------------------------------------------\n\n"
+    )
+    # start your code here
+    vt_classifier = VotingClassifier(
+        estimators=[
+            ("tree", tree_classifier),
+            ("rf", rf_classifier),
+            ("xgb", xgb_classifier),
+        ]
+    )
+    vt_classifier.fit(X_train, y_train)
+    y_pred_vt = vt_classifier.predict(X_test)
+    evaluate(y_test, y_pred_vt)
+    # end your code here
 
 
 if __name__ == "__main__":
