@@ -6,7 +6,7 @@
 #           https://github.com/enggen/Deep-Learning-Coursera
 #######################################################################################################################
 import numpy as np
-from utils_actfunc import *
+from .utils_actfunc import *
 
 class Layer:
     '''
