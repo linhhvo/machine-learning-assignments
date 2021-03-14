@@ -68,8 +68,14 @@ class Layer:
         """
         # Start your code here
             # Find Z: one line
-            # Find A: about four lines (Hint: you will need to call either the sigmoid() or relu() functions in utils_actfunc.py)
+        self.Z = np.dot(self.W.T, A_prev) + self.b 
 
+            # Find A: about four lines (Hint: you will need to call either the sigmoid() or relu() functions in utils_actfunc.py)
+        if self.act_function == "relu":
+            self.A = relu(self.Z)
+        elif self.act_function == "sigmoid":
+            self.A = sigmoid(self.Z)
+        
         # End your code here
 
         return self.A
@@ -94,6 +100,8 @@ class Layer:
             #dW -- Gradient of the cost with respect to W (current layer l), same shape as W
             #db -- Gradient of the cost with respect to b (current layer l), same shape as b
 
+        dW = (A_prev * dZ) / m
+        db = np.sum(dZ) / m
 
         # End your code here
 
@@ -104,7 +112,7 @@ class Layer:
         Update parameters using gradient descent
         """
         # Start your code here: two lines
-
+        self.W -= learning_rate * self.dW
         # End your code here
 
 class DNNClassifier():
