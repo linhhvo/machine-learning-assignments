@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
-from .dnn import Layer, DNNClassifier
-from .utils_loaddata import load_dataset
+from dnn import Layer, DNNClassifier
+from utils_loaddata import load_dataset
 
 train_x_orig, y_train, test_x_orig, y_test, classes = load_dataset()
 print("The shape of the original X_train: " + str(train_x_orig.shape))

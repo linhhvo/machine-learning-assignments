@@ -6,29 +6,36 @@
 #           https://github.com/enggen/Deep-Learning-Coursera
 #######################################################################################################################
 import numpy as np
-from .utils_actfunc import *
+from utils_actfunc import *
+
 
 class Layer:
-    '''
+    """
     A Layer object represents a single hidden layer with n_h hidden nodes
-    '''
+    """
 
     def __init__(self, n_h, activation):
-        '''
+        """
         This method is called when you create a Layer object
         Arguments:
             n_h -- number of hidden nodes in this layer
             activation -- the name of the activation function used for this layer (either 'relu' or 'sigmoid')
-        '''
+        """
         self.n_h = n_h
         self.act_function = activation
 
     def __str__(self):
-        '''
+        """
         You can print out the content of this layer if you want to make sure everything is correctly set up
-        '''
-        result = "Number of hidden nodes: " + str(self.n_h) + "\nShape of Weights:\t" \
-                 + str(self.W.shape) + "\nShape of Biases:\t" + str(self.b.shape)
+        """
+        result = (
+            "Number of hidden nodes: "
+            + str(self.n_h)
+            + "\nShape of Weights:\t"
+            + str(self.W.shape)
+            + "\nShape of Biases:\t"
+            + str(self.b.shape)
+        )
 
         return result
 
@@ -52,9 +59,8 @@ class Layer:
         # W -- initialized vector of shape (n_h_prev, n_h)
         # b -- initialized vector of shape(n_h, 1)
         # n_h -- number of hidden nodes in this layer
-        self.W = np.random.randn(n_h_prev, self.n_h)*0.01
-        self.b = np.zeros(shape = (self.n_h, 1))
-
+        self.W = np.random.randn(n_h_prev, self.n_h) * 0.01
+        self.b = np.zeros(shape=(self.n_h, 1))
 
     def forward(self, A_prev):
         """
@@ -67,15 +73,15 @@ class Layer:
         A -- the activations in this layer
         """
         # Start your code here
-            # Find Z: one line
-        self.Z = np.dot(self.W.T, A_prev) + self.b 
+        # Find Z: one line
+        self.Z = np.dot(self.W.T, A_prev) + self.b
 
-            # Find A: about four lines (Hint: you will need to call either the sigmoid() or relu() functions in utils_actfunc.py)
+        # Find A: about four lines (Hint: you will need to call either the sigmoid() or relu() functions in utils_actfunc.py)
         if self.act_function == "relu":
             self.A = relu(self.Z)
         elif self.act_function == "sigmoid":
             self.A = sigmoid(self.Z)
-        
+
         # End your code here
 
         return self.A
@@ -94,17 +100,17 @@ class Layer:
             dZ = sigmoid_backward(dA, self.Z)
 
         # Start your code here: four lines
-        #Find the following:
-            #m -- the number of instances in the dataset
+        # Find the following:
+        # m -- the number of instances in the dataset
         m = A_prev.shape[1]
 
-            #dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
-        dA_prev = self.W - dZ
+        # dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
+        dA_prev = np.dot(self.W, dZ)
 
-            #dW -- Gradient of the cost with respect to W (current layer l), same shape as W
+        # dW -- Gradient of the cost with respect to W (current layer l), same shape as W
         self.dW = np.dot(A_prev, dZ.T) / m
 
-            #db -- Gradient of the cost with respect to b (current layer l), same shape as b
+        # db -- Gradient of the cost with respect to b (current layer l), same shape as b
         self.db = np.sum(dZ, axis=1, keepdims=True) / m
 
         # End your code here
@@ -120,11 +126,13 @@ class Layer:
         self.b -= learning_rate * self.db
         # End your code here
 
-class DNNClassifier():
-    '''
+
+class DNNClassifier:
+    """
     A DNNClassifier assembles L hidden layers together and performs the classification task
-    '''
-    def __init__(self, layers = None):
+    """
+
+    def __init__(self, layers=None):
         if layers is None:
             self.layers = []
         else:
@@ -133,38 +141,43 @@ class DNNClassifier():
         self.costs = []
 
     def add(self, layer):
-        '''
+        """
         Add a single layer to the network
 
         Arguments:
         layer -- a hidden layer object with one or more hidden nodes
-        '''
+        """
 
         # Start your code here: one line
-        self.layers 
+        self.layers.append(layer)
         # End your code here
 
     def add_input(self, X_train):
-        '''
+        """
         Add the input data to layer 0 and initialize all other hidden layers
 
         Arguments:
         X_train -- training data of shape (n_x, m), where n_x is the number of features and m is the number of instances
-        '''
+        """
 
         # Start your code here: four lines
-            # Create a Layer object (layer_0) to hold the input (the n_h for this layer is X_train.shape[0]), the activation function is None
+        # Create a Layer object (layer_0) to hold the input (the n_h for this layer is X_train.shape[0]), the activation function is None
         layer_0 = Layer(X_train.shape[0], None)
-            # Set layer_0's activation (A) to be X_train
-        
-            # Insert layer_0 into the front of the layers list
-            # Find the value of L. Note that here L = # hiddlen layers + 1
 
+        # Set layer_0's activation (A) to be X_train
+        layer_0.A = X_train
+
+        # Insert layer_0 into the front of the layers list
+        self.layers.insert(0, layer_0)
+
+        # Find the value of L. Note that here L = # hiddlen layers + 1
+        L = len(self.layers)
         # End your code here
 
         # Initialize weights and biases for each layer
         # Start your code here: two lines
         for i in range(1, L):
+            self.layers[i].initialize(self.layers[i - 1].n_h)
 
         # End your code here
 
@@ -180,17 +193,17 @@ class DNNClassifier():
 
         """
 
-        L = len(self.layers)       # Note that here L = # hiddlen layers + 1
+        L = len(self.layers)  # Note that here L = # hiddlen layers + 1
 
         # Forward propagate through layers 1 to L-1
         A_prev = X
         for i in range(1, L):
             # Start your code here: two lines
-            A = self.forward(A_prev)
+            A = self.layers[i].forward(A_prev)
             A_prev = A
             # End your code here
 
-        aL = A      # aL is the activation of the last layer, shape (1, m)
+        aL = A  # aL is the activation of the last layer, shape (1, m)
 
         return aL
 
@@ -208,7 +221,13 @@ class DNNClassifier():
         m = y_train.shape[1]
 
         # Compute loss from AL and y.
-        cost = -np.sum(np.multiply(y_train, np.log(aL)) + np.multiply(1 - y_train, np.log(1 - aL)))/m
+        cost = (
+            -np.sum(
+                np.multiply(y_train, np.log(aL))
+                + np.multiply(1 - y_train, np.log(1 - aL))
+            )
+            / m
+        )
 
         # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17), i.e., convert it into a single number
         cost = np.squeeze(cost)
@@ -226,47 +245,49 @@ class DNNClassifier():
         """
 
         L = len(self.layers)
-        dAL = - (np.divide(y_train, aL) - np.divide(1 - y_train, 1 - aL)) # derivative of the cost with respect to aL
+        dAL = -(
+            np.divide(y_train, aL) - np.divide(1 - y_train, 1 - aL)
+        )  # derivative of the cost with respect to aL
 
         dA = dAL
-        for i in range(L-1, 0, -1):
+        for i in range(L - 1, 0, -1):
             # Start your code here: two lines
-
-
+            dA_current = self.layers[i].backward(dA, aL)
+            dA = dA_current
             # End your code here
-
 
     def update_parameters(self, learning_rate):
         L = len(self.layers)
         for i in range(1, L):
             # Start your code here: one line
-
+            self.layers[i].update(learning_rate)
             # End your code here
 
-    def fit(self, X_train, y_train, learning_rate = 0.01, num_epochs = 1000, print_cost = False):
-        '''
+    def fit(
+        self, X_train, y_train, learning_rate=0.01, num_epochs=1000, print_cost=False
+    ):
+        """
         Fit the data by running the propagation for a number of epochs
 
         Arguments:
         learning_rate -- the learning rate
         num_epochs -- number of iterations for training
         print_cost -- whether to print the loss, True to print the loss every 100 steps
-        '''
+        """
 
         # Add the input to the network
         self.add_input(X_train)
 
         for i in range(num_epochs):
             # Start your code here: four lines
-                # forward prop
-                # compute the cost for this epoch
-                # back prop
-                # update parameters (gradient descent)
-
-
-
-
-
+            # forward prop
+            aL = self.forward_prop(X_train)
+            # compute the cost for this epoch
+            cost = self.compute_cost(aL, y_train)
+            # back prop
+            self.back_prop(aL, y_train)
+            # update parameters (gradient descent)
+            self.update_parameters(learning_rate)
             # End your code here
 
             # store and print the cost every 100 epochs
@@ -275,9 +296,8 @@ class DNNClassifier():
                 if print_cost:
                     print("Cost after iteration {}: {}".format(i, cost))
 
-
     def predict(self, X_test):
-        '''
+        """
         Predict whether the label is 0 or 1 using the learned model
 
         Arguments:
@@ -285,15 +305,15 @@ class DNNClassifier():
 
         Returns:
         y_prediction -- a numpy array (vector) containing all predictions (0/1) for instances in X_test
-        '''
+        """
         m = X_test.shape[1]
         y_prediction = np.zeros((1, m))
 
         # Start your code here: one line
-            # Find the aL for X_test: one line
+        # Find the aL for X_test: one line
         aL = self.forward_prop(X_test)
-        
-            # Convert probabilities a[0,i] to actual predictions p[0,i]: two lines
+
+        # Convert probabilities a[0,i] to actual predictions p[0,i]: two lines
         for i in range(m):
             y_prediction[0, i] = 1 if aL[0, i] > 0.5 else 0
 
