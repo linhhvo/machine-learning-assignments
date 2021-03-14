@@ -96,12 +96,16 @@ class Layer:
         # Start your code here: four lines
         #Find the following:
             #m -- the number of instances in the dataset
-            #dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
-            #dW -- Gradient of the cost with respect to W (current layer l), same shape as W
-            #db -- Gradient of the cost with respect to b (current layer l), same shape as b
+        m = A_prev.shape[1]
 
-        dW = (A_prev * dZ) / m
-        db = np.sum(dZ) / m
+            #dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
+        dA_prev = self.W - dZ
+
+            #dW -- Gradient of the cost with respect to W (current layer l), same shape as W
+        self.dW = np.dot(A_prev, dZ.T) / m
+
+            #db -- Gradient of the cost with respect to b (current layer l), same shape as b
+        self.db = np.sum(dZ, axis=1, keepdims=True) / m
 
         # End your code here
 
@@ -113,6 +117,7 @@ class Layer:
         """
         # Start your code here: two lines
         self.W -= learning_rate * self.dW
+        self.b -= learning_rate * self.db
         # End your code here
 
 class DNNClassifier():
@@ -136,7 +141,7 @@ class DNNClassifier():
         '''
 
         # Start your code here: one line
-
+        self.layers 
         # End your code here
 
     def add_input(self, X_train):
@@ -149,13 +154,17 @@ class DNNClassifier():
 
         # Start your code here: four lines
             # Create a Layer object (layer_0) to hold the input (the n_h for this layer is X_train.shape[0]), the activation function is None
+        layer_0 = Layer(X_train.shape[0], None)
             # Set layer_0's activation (A) to be X_train
+        
             # Insert layer_0 into the front of the layers list
             # Find the value of L. Note that here L = # hiddlen layers + 1
+
         # End your code here
 
         # Initialize weights and biases for each layer
         # Start your code here: two lines
+        for i in range(1, L):
 
         # End your code here
 
@@ -177,7 +186,8 @@ class DNNClassifier():
         A_prev = X
         for i in range(1, L):
             # Start your code here: two lines
-
+            A = self.forward(A_prev)
+            A_prev = A
             # End your code here
 
         aL = A      # aL is the activation of the last layer, shape (1, m)
@@ -281,8 +291,11 @@ class DNNClassifier():
 
         # Start your code here: one line
             # Find the aL for X_test: one line
+        aL = self.forward_prop(X_test)
+        
             # Convert probabilities a[0,i] to actual predictions p[0,i]: two lines
-
+        for i in range(m):
+            y_prediction[0, i] = 1 if aL[0, i] > 0.5 else 0
 
         # End your code here
 
