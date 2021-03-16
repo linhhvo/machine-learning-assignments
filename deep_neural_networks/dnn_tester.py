@@ -27,10 +27,11 @@ dnnclf.add(Layer(5, "relu"))
 dnnclf.add(Layer(1, "sigmoid"))
 
 eta = 0.0075
-iterations = 2500
+iterations = 1000
 dnnclf.fit(X_train, y_train, learning_rate=eta, num_epochs=iterations, print_cost=True)
 
 y_pred = dnnclf.predict(X_train)
+
 print("Training accuracy: %.2f" % (accuracy_score(y_train.T, y_pred.T) * 100) + "%")
 y_pred = dnnclf.predict(X_test)
 print("Testing accuracy: %.2f" % (accuracy_score(y_test.T, y_pred.T) * 100) + "%")

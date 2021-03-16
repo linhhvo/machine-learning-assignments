@@ -83,7 +83,6 @@ class Layer:
             self.A = sigmoid(self.Z)
 
         # End your code here
-
         return self.A
 
     def backward(self, dA, A_prev):
@@ -178,7 +177,6 @@ class DNNClassifier:
         # Start your code here: two lines
         for i in range(1, L):
             self.layers[i].initialize(self.layers[i - 1].n_h)
-
         # End your code here
 
     def forward_prop(self, X):
@@ -250,10 +248,12 @@ class DNNClassifier:
         )  # derivative of the cost with respect to aL
 
         dA = dAL
+
         for i in range(L - 1, 0, -1):
             # Start your code here: two lines
-            dA_current = self.layers[i].backward(dA, aL)
-            dA = dA_current
+            dA_prev = dA
+            dA = self.layers[i].backward(dA_prev, aL)
+
             # End your code here
 
     def update_parameters(self, learning_rate):
