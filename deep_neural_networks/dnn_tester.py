@@ -27,7 +27,7 @@ dnnclf.add(Layer(5, "relu"))
 dnnclf.add(Layer(1, "sigmoid"))
 
 eta = 0.0075
-iterations = 1000
+iterations = 2500
 dnnclf.fit(X_train, y_train, learning_rate=eta, num_epochs=iterations, print_cost=True)
 
 y_pred = dnnclf.predict(X_train)
