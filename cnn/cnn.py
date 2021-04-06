@@ -9,6 +9,9 @@ from utils_loaddata import load_dataset
 # Load and preprocess data
 X_train, y_train, X_test, y_test, classes = load_dataset()
 
+X_train = X_train / 255.0
+X_test = X_test / 255.0
+
 y_train = y_train.T
 y_test = y_test.T
 
